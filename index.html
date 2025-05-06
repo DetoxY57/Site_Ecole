@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fonctionnement robot site école</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0e0e0e;
+      color: #f1f1f1;
+      padding: 40px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #E098FF;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #E098FF;
+    }
+
+    h2 {
+      font-size: 1rem;
+      color: #E098FF;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #E098FF;
+    }
+
+    p {
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #1e1e1e;
+      padding: 15px 20px;
+      margin: 20px;
+      border-left: 5px solid #ff4b4b;
+      border-radius: 8px;
+      max-width: 400px;
+      width: fit-content;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    li:hover {
+      transform: translateX(5px);
+      background: #2a2a2a;
+    }
+
+    .status-green {
+      color: #00ff88;
+      font-weight: bold;
+    }
+
+    .status-red {
+      color: #ff4b4b;
+      font-weight: bold;
+    }
+
+    .status-yellow {
+      color: #ffe600;
+      font-weight: bold;
+    }
+
+    .image_Site_Ecole {
+  position: absolute;
+  top: 35px;
+  right: 30px;
+  width: 400px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image_Site_Ecole:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 25px rgba(224, 152, 255, 0.7);
+}
+
+	
+
+    button {
+      padding: 10px 20px;
+      background: #E098FF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #b366d3;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Statut des Robots :</h1>
+  <p>Voici l'état actuel des robots connectés au réseau :</p>
+
+  <ul id="robot-status">
+    <li>Chargement des statuts...</li>
+  </ul>
+
+  <h2>Plan de la zone :</h2>
+  <button onclick="ouvrirPDF()">Voir le plan PDF</button>
+
+  <img src="1000011231.jpg" class="image_Site_Ecole" alt="Plan usine">
+
+<div style="margin-top: 30px;">
+  <h2>Accès SharePoint :</h2>
+  <button onclick="window.open('https://grouperenault.sharepoint.com/sites/MaintenancePeintureSovabBatilly2/Shared%20Documents/Forms/AllItems.aspx?FolderCTID=0x012000B538326CE8C3AD4B9C7687F4BC6709F1&id=%2Fsites%2FMaintenancePeintureSovabBatilly2%2FShared%20Documents%2FRobots%2FSITES%20ECOLE', '_blank')">Accéder à la doc Site Ecole</button>
+</div>
+
+  <script>
+    async function chargerStatut() {
+      try {
+        console.log('Début de fetch...');
+        const response = await fetch('status.json');
+        console.log('Réponse reçue :', response);
+
+        if (!response.ok) {
+          throw new Error('Erreur HTTP: ' + response.status);
+        }
+
+        const data = await response.json();
+        console.log('Données JSON :', data);
+
+        const ul = document.getElementById('robot-status');
+        ul.innerHTML = '';
+
+        for (let robot in data) {
+          const li = document.createElement('li');
+          li.textContent = `${robot} ${data[robot]}`;
+          ul.appendChild(li);
+        }
+      } catch (err) {
+        console.error('Erreur dans le fetch ou le traitement des données:', err);
+        document.getElementById('robot-status').innerHTML = '<li>Erreur de chargement</li>';
+      }
+    }
+
+    function ouvrirPDF() {
+      window.open('plan dojo rob.pdf', '_blank', 'width=1000,height=800');
+    }
+
+    chargerStatut();
+    setInterval(chargerStatut, 5000);
+  </script>
+</body>
+</html>
