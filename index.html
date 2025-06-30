@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fonctionnement robot site école</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f0f2f5, #e2e6ec);
+      color: #222;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background-color: rgba(17, 24, 39, 0.3);
+      backdrop-filter: blur(20px);
+      border-radius: 2.5rem;
+      border: 2px solid rgba(0, 0, 246, 0.3);
+      transition: transform 0.4s ease-in-out;
+      max-width: 95%;
+      width: calc(100% - 4rem);
+      justify-content: space-between;
+    }
+    .navbar.hide {
+      transform: translate(-50%, -100%);
+    }
+    .navbar .logo {
+      flex-shrink: 0;
+    }
+    .navbar .logo img {
+      height: 48px;
+      width: auto;
+    }
+    .navbar .center-menu {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    .navbar .center-menu ul {
+      display: flex;
+      gap: 1rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .navbar .center-menu ul li {
+      display: inline-flex;
+      align-items: center;
+    }
+    .navbar ul li a {
+      text-decoration: none;
+      color: #cbd5e1;
+      font-weight: 500;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+    .navbar ul li a:hover {
+      color: #fff;
+    }
+    .navbar .discord-link {
+      flex-shrink: 0;
+    }
+    .navbar .discord-icon {
+      width: 30px;
+      height: 30px;
+      transition: transform 0.4s ease-in-out;
+    }
+    .navbar .discord-icon:hover {
+      transform: rotate(20deg) scale(1.2);
+    }
+    header {
+      background: linear-gradient(to right, #111827, #1f2937);
+      color: #fff;
+      padding: 11rem 1rem 4rem;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 80%);
+      animation: rotate 20s linear infinite;
+      z-index: 0;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    header .container { position: relative; z-index: 1; }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #60a5fa, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p { font-size: 1.1rem; color: #cbd5e1; }
+    .grid {
+      display: flex;
+      justify-content: center;
+      padding: 4rem 1rem;
+      max-width: 1200px;
+      margin: auto;
+      flex-wrap: wrap;
+    }
+	 .card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 0 1px #e5e7eb, 0 10px 25px rgba(0, 0, 0, 0.05);
+      max-width: 381px;
+      text-align: center;
+      margin: 0.25rem;
+    }
+    .card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    .card p {
+      margin-bottom: 1.5rem;
+      color: #4b5563;
+      text-align: left;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      border-radius: 999px;
+      font-weight: 500;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+      cursor: pointer;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 246, 0.3);
+    }
+    footer {
+      text-align: center;
+      padding: 4rem 1rem 2rem 1rem;
+      background: #1f2937;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+    .page { display: none; animation: fadeIn 0.5s ease-in-out; }
+    .page.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .example-imgs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      padding: 3rem 1rem;
+    }
+    .example-imgs img {
+      width: 200px;
+      max-width: 90%;
+      border-radius: 1rem;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .example-imgs img:hover {
+      transform: scale(1.07) rotate(1deg);
+      box-shadow: 0 10px 20px rgba(0, 0, 246, 0.3);
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      max-width: 500px;
+      margin: 2rem auto 4rem auto;
+      gap: 1rem;
+      padding: 0 1rem;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid #ccc;
+      font-family: 'Poppins', sans-serif;
+    }
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      header p { font-size: 1rem; }
+      .navbar ul {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 0;
+      }
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .card {
+        max-width: 95%;
+        padding: 1.5rem;
+      }
+    }
+	
+    .image_Site_Ecole {
+  position: absolute;
+  top: -75px;
+  right: 20px;
+  width: 380px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image_Site_Ecole:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 25px rgba(0, 0, 246, 0.3);
+ }
+  </style>
+</head>
+<body class="fade">
+  <nav class="navbar">
+    <div class="logo">
+      <img src="grouperenault.png" alt="Logo" />
+    </div>
+    <div class="center-menu">
+      <ul>
+        <li><a onclick="switchPage('accueil')">Accueil</a></li>
+        <li><a onclick="switchPage('Plan de zone')">Plan de zone</a></li>
+        <li><a onclick="switchPage('SharePoint')">SharePoint</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <section id="accueil" class="page active">
+    <header>
+      <div class="container">
+        <h1>Statut des Robots :</h1>
+        <p>Voici l'état actuel des robots connectés au réseau :</p>
+		  <img src="1000011231.jpg" class="image_Site_Ecole" alt="Plan usine">
+      </div>
+    </header>
+    <ul id="robot-status">
+    <li>Chargement des statuts...</li>
+  </ul>
+  </section>
+  
+  <section id="Plan de zone" class="page">
+    <header>
+      <div class="container">
+      </div>
+    </header>
+    <section class="grid">
+	      <div class="card">
+        <h2>Plan de la zone</h2>
+        <button class="btn" onclick="ouvrirPDF()">Voir le plan PDF</button>
+      </div>
+    </section>
+		</section>
+	
+	<section id="SharePoint" class="page">
+    <header>
+      <div class="container">
+      </div>
+    </header>
+    <section class="grid">
+	      <div class="card">
+        <h2>Accès à toutes la documentation</h2>
+        <button class="btn" onclick="window.open('https://grouperenault.sharepoint.com/sites/MaintenancePeintureSovabBatilly2/Shared%20Documents/Forms/AllItems.aspx?FolderCTID=0x012000B538326CE8C3AD4B9C7687F4BC6709F1&id=%2Fsites%2FMaintenancePeintureSovabBatilly2%2FShared%20Documents%2FRobots%2FSITES%20ECOLE', '_blank')">Accéder à la doc Site Ecole</button>
+      </div>
+    </section>
+		</section>
+	
+  <footer>
+    <p>&copy; 2025 - Renault 🧠🔥</p>
+  </footer>
+  <script>
+    function switchPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    async function chargerStatut() {
+      try {
+        console.log('Début de fetch...');
+        const response = await fetch('status.json');
+        console.log('Réponse reçue :', response);
+
+        if (!response.ok) {
+          throw new Error('Erreur HTTP: ' + response.status);
+        }
+
+        const data = await response.json();
+        console.log('Données JSON :', data);
+
+        const ul = document.getElementById('robot-status');
+        ul.innerHTML = '';
+
+        for (let robot in data) {
+          const li = document.createElement('li');
+          li.textContent = `${robot} ${data[robot]}`;
+          ul.appendChild(li);
+        }
+      } catch (err) {
+        console.error('Erreur dans le fetch ou le traitement des données:', err);
+        document.getElementById('robot-status').innerHTML = '<li>Erreur de chargement</li>';
+      }
+    }
+
+    function ouvrirPDF() {
+      window.open('plan dojo rob.pdf', '_blank', 'width=1000,height=800');
+    }
+
+    chargerStatut();
+    setInterval(chargerStatut, 5000);
+
+    const navbar = document.querySelector('.navbar');
+    let lastScrollTop = 0;
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      if (scrollTop > lastScrollTop && scrollTop > 50) {
+        navbar.classList.add('hide');
+      } else {
+        navbar.classList.remove('hide');
+      }
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+    window.addEventListener('load', () => {
+      navbar.classList.remove('hide');
+    });
+  </script>
+</body>
+</html>
